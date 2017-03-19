@@ -1,5 +1,4 @@
 """Problem one: Trains"""
-
 from collections import defaultdict
 
 
@@ -13,6 +12,9 @@ class Graph:
 
         if distances_str:
             self.add_edges(distances_str.replace(" ", "").split(","))
+
+    def distance(self, from_node, to_node):
+        return self.distances[(from_node, to_node)]
 
     def add_edges(self, node_pair_distances):
         for node_pair_distance in node_pair_distances:
@@ -28,33 +30,31 @@ class Graph:
         self.distances[(from_node, to_node)] = distance
 
 
-def dijsktra(graph, initial):
-    """dijsktra implementation, returns two dictionaries: visited nodes and path"""
-    visited = {initial: 0}
+def dijsktra(graph, start_node):
+    """ Dijsktra implementation, returns two dictionaries: visited nodes, path and end node """
+    nodes = set(graph.nodes)  # copy
+    visited = {start_node: 0}
     path = {}
-
-    nodes = set(graph.nodes)
+    # end_node = start_node
 
     while nodes:
         min_node = None
         for node in nodes:
-            if node in visited:
-                if min_node is None:
-                    min_node = node
-                elif visited[node] < visited[min_node]:
-                    min_node = node
+            if node in visited and (not min_node or visited[node] < visited[min_node]):
+                min_node = node
 
-        if min_node is None:
+        if not min_node:
             break
 
+        current_distance = visited[min_node]
         nodes.remove(min_node)
-        current_weight = visited[min_node]
 
-        for edge in graph.edges[min_node]:
-            weight = current_weight + graph.distances[(min_node, edge)]
-            if edge not in visited or weight < visited[edge]:
-                visited[edge] = weight
-                path[edge] = min_node
+        for neighbor in graph.edges[min_node]:
+            weight = current_distance + graph.distance(min_node, neighbor)
+            if neighbor not in visited or weight < visited[neighbor]:
+                visited[neighbor] = weight
+                path[neighbor] = min_node
+                # end_node = neighbor
 
     return visited, path
 
@@ -107,10 +107,10 @@ def simple_route(_route, _graph):
 """
 
 
-def dist(_graph, pathway):
+def dist(graph, pathway):
     pathway = pathway.replace(" ", "")
     edges = [(pathway[i], pathway[i + 1]) for i in range(len(pathway)) if i < len(pathway) - 1]
-    return sum([_graph.distances[edge] for edge in edges])
+    return sum([graph.distances[edge] for edge in edges])
 
 
 def run_route_len3(_graph, start_node, end_node, max_dist=30, pathway=""):
@@ -287,6 +287,9 @@ def route_verification(_route, _graph):
 if __name__ == '__main__':
     # g = create_graph(input("Enter Graph: "))
     g = Graph("AB5, BC4, CD8, DC8, DE6, AD5, CE2, EB3, AE7")
+
+    g = Graph("AB5, BC4, CD8, DC8, DE6, AD5, CE2, EB3, AE7")
+    assert dijsktra(g, "A") == ({'E': 7, 'A': 0, 'C': 9, 'B': 5, 'D': 5}, {'E': 'A', 'C': 'B', 'B': 'A', 'D': 'A'})
     # print(route_verification(input("enter route: "), g)) #A-B-C
     print("A-B-C:", route_verification("A-B-C", g))
     print("A-D:", route_verification("A-D", g))
