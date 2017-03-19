@@ -32,11 +32,11 @@ def test_route_verification():
 
 def test_simple_route():
     g = Graph("AB5, BC4, CD8, DC8, DE6, AD5, CE2, EB3, AE7")
-    assert simple_route("A-B-C", g) == '9'
-    assert simple_route("A-D", g) == '5'
-    assert simple_route("A-D-C", g) == '13'
-    assert simple_route("A-E-B-C-D", g) == '22'
-    assert simple_route("A-E-D", g) == 'NO SUCH ROUTE'
+    assert route_distance("A-B-C", g) == '9'
+    assert route_distance("A-D", g) == '5'
+    assert route_distance("A-D-C", g) == '13'
+    assert route_distance("A-E-B-C-D", g) == '22'
+    assert route_distance("A-E-D", g) == 'NO SUCH ROUTE'
 
 
 def test_complex_route():

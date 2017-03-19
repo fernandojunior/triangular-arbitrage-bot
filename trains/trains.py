@@ -60,41 +60,34 @@ def dijsktra(graph, start_node):
 
 
 def mysplit(s, delim=None):
-    """Special split that does not return empty strings"""
+    """ Special split that does not return empty strings """
     return [x for x in s.split(delim) if x]
 
 
-def simple_route(_route, _graph):
-    """If the route is valid it returns the total distance to travel"""
+def route_distance(route, graph):
+    """ Return the total route distance given a distance graph """
+    if type(route) is not list:
+        route = route.split("-")
 
-    if type(_route) is not list:
-        _route = _route.split("-")
+    total_distance = 0
 
-    _nodes = len(_route)
-    _dist = 0
-
-    for node in range(0, _nodes):
-        if node+1 < _nodes:
-            destiny = node+1
-
+    for i, current_node in enumerate(route):
+        # has next node in route
+        if len(route) > i + 1:
+            next_node = route[i + 1]
         else:
             break
 
-        visited, path = dijsktra(_graph, _route[node])
+        visited, path = dijsktra(graph, current_node)
 
-        if (_route[destiny] in path) and (path[_route[destiny]] == _route[node]):
-            _dist += visited[_route[destiny]]
-
+        if (next_node in path) and (path[next_node] == current_node):
+            # agregate acumulative visited node distance into total_distance
+            total_distance += visited[next_node]
         else:
-            _dist = 0
-            output = "NO SUCH ROUTE"
+            total_distance = None
             break
 
-    if _dist:
-        output = str(_dist)
-
-    return output
-
+    return str(total_distance) if total_distance else "NO SUCH ROUTE"
 
 """
   # C->C
@@ -113,15 +106,15 @@ def dist(graph, pathway):
     return sum([graph.distances[edge] for edge in edges])
 
 
-def run_route_len3(_graph, start_node, end_node, max_dist=30, pathway=""):
+def run_route_len3(graph, start_node, end_node, max_dist=30, pathway=""):
     pathway = pathway + start_node + " "
-    visited, path = dijsktra(_graph, start_node)
+    visited, path = dijsktra(graph, start_node)
     count = 0
     # print("From", start_node, "to", end_node, "::", pathway)
 
     for k in path.keys():
         try:
-            pathway_dist = dist(_graph, pathway + k)
+            pathway_dist = dist(graph, pathway + k)
         except:
             pathway_dist = None
 
@@ -144,14 +137,14 @@ def run_route_len3(_graph, start_node, end_node, max_dist=30, pathway=""):
                 # break
 
             # print(start_node, "->", k, "-", pathway)
-            count += run_route_len3(_graph=_graph, start_node=k, end_node=end_node, max_dist=max_dist, pathway=pathway)
+            count += run_route_len3(graph=graph, start_node=k, end_node=end_node, max_dist=max_dist, pathway=pathway)
             # print(output, pathway)
     return count
 
 
-def run_route_len(_graph, start_node,  end_node, operator="<", _dist=0, min_dist=-1, pathway=""):
+def run_route_len(graph, start_node,  end_node, operator="<", _dist=0, min_dist=-1, pathway=""):
     pathway = pathway + start_node + " "
-    visited, path = dijsktra(_graph, start_node)
+    visited, path = dijsktra(graph, start_node)
     print("From", start_node, "to", end_node, "::")
     print(path)
 
@@ -169,7 +162,7 @@ def run_route_len(_graph, start_node,  end_node, operator="<", _dist=0, min_dist
                     break
 
             print(start_node, "->", k, "-", pathway)
-            dist = run_route_len(_graph=_graph, start_node=k, end_node=end_node, operator=operator, _dist=_dist,
+            dist = run_route_len(graph=graph, start_node=k, end_node=end_node, operator=operator, _dist=_dist,
                                  min_dist=min_dist, pathway=pathway)
             if min_dist == -1 or dist < max_dist:
                 min_dist = dist
@@ -178,9 +171,9 @@ def run_route_len(_graph, start_node,  end_node, operator="<", _dist=0, min_dist
     return _dist
 
 
-def run_route(_graph, start_node, max_stops, end_node, operator="<=", stops=-1, pathway=""):
+def run_route(graph, start_node, max_stops, end_node, operator="<=", stops=-1, pathway=""):
     pathway = pathway + start_node + " "
-    visited, path = dijsktra(_graph, start_node)
+    visited, path = dijsktra(graph, start_node)
     output = 0
     print("From", start_node, "to", end_node, "::")
     print(path)
@@ -207,34 +200,34 @@ def run_route(_graph, start_node, max_stops, end_node, operator="<=", stops=-1, 
                     break
 
             print(start_node, "->", k, stops, "-", pathway)
-            output += run_route(_graph=_graph, start_node=k, max_stops=max_stops, end_node=end_node, operator=operator,
+            output += run_route(graph=graph, start_node=k, max_stops=max_stops, end_node=end_node, operator=operator,
                                 stops=stops, pathway=pathway)  # noqa
 
     return output
 
 
-def complex_route(_route, _graph):
+def complex_route(route, graph, stops_handler=None):
     """If the route is valid it returns the total distance to travel"""
     output = 0
 
-    if type(_route) is not list:
-        _route = _route.replace(" ", "").split(",")
+    if type(route) is not list:
+        route = route.replace(" ", "").split(",")
 
-    start_node, end_node = _route[0].split("->")[0], _route[0].split("->")[1]
+    start_node, end_node = route[0].split("->")[0], route[0].split("->")[1]
     print(start_node, end_node)
 
     process = {"val": list(), "operator": ""}
 
-    if "==" in _route[1]:
+    if "==" in route[1]:
         process["operator"] = "=="
 
-    elif "<=" in _route[1]:
+    elif "<=" in route[1]:
         process["operator"] = "<="
 
-    elif "<" in _route[1]:
+    elif "<" in route[1]:
         process["operator"] = "<"
 
-    process["val"] = mysplit(_route[1], process["operator"])
+    process["val"] = mysplit(route[1], process["operator"])
 
     if process["val"][0].upper() == "S":
         # return number of routes with a defined number of stops betwen start and end
@@ -242,14 +235,14 @@ def complex_route(_route, _graph):
             # which are equal to process["val"][1]
             max_stops = int(process["val"][1])
             print("start_node", start_node, "end node", end_node)
-            output = run_route(_graph=_graph, start_node=start_node, max_stops=int(process["val"][1]),
+            output = run_route(graph=graph, start_node=start_node, max_stops=int(process["val"][1]),
                                end_node=end_node, operator=process["operator"])
 
         elif process["operator"] == "<=":
             # which are equal or less to process["val"][1]
             max_stops = int(process["val"][1])
             print("start_node", start_node, "end node", end_node)
-            output = run_route(_graph=_graph, start_node=start_node, max_stops=max_stops, end_node=end_node,
+            output = run_route(graph=graph, start_node=start_node, max_stops=max_stops, end_node=end_node,
                                operator=process["operator"])
 
     elif process["val"][0].upper() == "L":
@@ -260,7 +253,7 @@ def complex_route(_route, _graph):
                 pass
             else:
                 # The length of the shortest route from start_node to end_node
-                output = run_route_len(_graph, start_node=start_node, end_node=end_node, operator=process["operator"])
+                output = run_route_len(graph, start_node=start_node, end_node=end_node, operator=process["operator"])
 
     if not output:
         output = "NO SUCH ROUTE"
@@ -268,36 +261,37 @@ def complex_route(_route, _graph):
     return output
 
 
-def route_verification(_route, _graph):
+def route_verification(_route, graph):
     if "->" in _route:
-        output = complex_route(_route, _graph)
+        output = complex_route(_route, graph)
 
     elif "-" in _route:
-        output = simple_route(_route, _graph)
+        output = route_distance(_route, graph)
 
     else:
         if type(_route) is not list:
             _route = _route.split("-")
 
-        output = simple_route(_route, _graph)
+        output = route_distance(_route, graph)
 
     return output
 
 
 if __name__ == '__main__':
-    # g = create_graph(input("Enter Graph: "))
     g = Graph("AB5, BC4, CD8, DC8, DE6, AD5, CE2, EB3, AE7")
 
-    g = Graph("AB5, BC4, CD8, DC8, DE6, AD5, CE2, EB3, AE7")
-    assert dijsktra(g, "A") == ({'E': 7, 'A': 0, 'C': 9, 'B': 5, 'D': 5}, {'E': 'A', 'C': 'B', 'B': 'A', 'D': 'A'})
-    # print(route_verification(input("enter route: "), g)) #A-B-C
+    # assert dijsktra(g, "A") == ({'E': 7, 'A': 0, 'C': 9, 'B': 5, 'D': 5}, {'E': 'A', 'C': 'B', 'B': 'A', 'D': 'A'})
+    # print("########################")
+    # print(route_verification("C->C, S <= 3", g)) # A-B-C
+    # print("########################")
     print("A-B-C:", route_verification("A-B-C", g))
     print("A-D:", route_verification("A-D", g))
     print("A-D-C:", route_verification("A-D-C", g))
     print("A-E-B-C-D:", route_verification("A-E-B-C-D", g))
     print("A-E-D:", route_verification("A-E-D", g))
-    print(dijsktra(g, "C"))
 
+
+def tmp():
     # TODO
 
     print("C->C, S <= 3", route_verification("C->C, S <= 3", g))
