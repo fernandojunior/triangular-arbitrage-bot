@@ -1,9 +1,14 @@
-"""Problem one: Trains"""
+"""
+Problem one: Trains
+
+author: Fernando Felix do Nascimento Junior
+year: 2017
+"""
 from collections import defaultdict
 
 
 class Graph:
-    """ An unidireccional edge graph. This is a very simple implementation, it may only add nodes and edges"""
+    """ An unidireccional distance graph. This is a very simple implementation, it may only add nodes and edges"""
 
     def __init__(self, distances_str=None):
         self.nodes = set()
@@ -30,22 +35,18 @@ class Graph:
         self.distances[(from_node, to_node)] = distance
 
 
-def mysplit(s, delim=None):
-    """ Special split that does not return empty strings """
-    return [x for x in s.split(delim) if x]
-
-
-def route_distance(route, graph):
+def route_distance(graph, route, exception_message="NO SUCH ROUTE"):
     """ Return the total route distance given a distance graph """
     route = route.replace("-", "")
     edges = [(route[i], route[i + 1]) for i in range(len(route)) if i < len(route) - 1]
     try:
         return str(sum([graph.distances[edge] for edge in edges]))
     except:
-        return "NO SUCH ROUTE"
+        return exception_message
 
 
 def shortest_route(graph, start_node, end_node):
+    "Giving a distance graph, return the shortest path between a starting and ending routes without repetition."
     route = ""
     total_distance = 0
 
@@ -76,199 +77,54 @@ def shortest_route(graph, start_node, end_node):
     return total_distance
 
 
-def count_routes(graph, start_node, end_node, stops, operator="<=", route="", routes_=[]):
+def count_routes_by_stops(graph, start_node, end_node, stops, operator="<=", _route=""):
     """
-    Count routes recursively between a start node and an end node
+    Giving a distance graph, count routes recursively between a start node and an end node based on number of stops
+    criterion (operator). For example, given a starting route at C and an ending at C, count and return the number of
+    routes (or trips) with a maximum (operator=="<=") of stops=3.
     """
-    print("asdsada", routes_)
-    route = route + start_node
-    route_counts = 0
-    current_stops = len(route) - 1
+    _route = _route + start_node
+    count = 0
+    current_stops = len(_route) - 1  # similar to number of edges
 
     for neighbor in graph.edges[start_node]:
         if current_stops > stops:
             break
 
         if neighbor == end_node:
-            route = route + end_node
+            _route = _route + end_node
             if(eval(str(current_stops) + operator + str(stops))):
-                routes_.append(route)
-                route_counts = 1
+                count += 1
                 break
 
-        route_counts += count_routes(graph, neighbor, end_node, stops, operator=operator, route=route, routes_=routes_)
+        count += count_routes_by_stops(graph, neighbor, end_node, stops, operator=operator, _route=_route)
 
-    print(routes_)
-
-    return route_counts
+    return count
 
 
-# def complex_route(route, graph, criteria_type=None, criteria=None):
-#     """If the route is valid it returns the total distance to travel"""
-#     output = 0
-#
-#     route, criteria = route.replace(" ", "").split(",")
-#     start_node, end_node = route.split("->")
-#
-#     process = {"val": list(), "operator": ""}
-#
-#     if "==" in criteria:
-#         process["operator"] = "=="
-#
-#     elif "<=" in criteria:
-#         process["operator"] = "<="
-#
-#     elif "<" in criteria:
-#         process["operator"] = "<"
-#
-#     process["val"] = mysplit(criteria, process["operator"])
-#
-#     if process["val"][0].upper() == "S":
-#         # return number of routes with a defined number of stops betwen start and end
-#         if process["operator"] == "==":
-#             # which are equal to process["val"][1]
-#             stops = int(process["val"][1])
-#             output = count_routes(graph, start_node, end_node, stops=int(process["val"][1]),
-#                                   operator=process["operator"])
-#
-#         elif process["operator"] == "<=":
-#             # which are equal or less to process["val"][1]
-#             stops = int(process["val"][1])
-#             output = count_routes(graph, start_node, end_node, stops=stops, operator=process["operator"])
-#
-#     elif process["val"][0].upper() == "L":
-#         # return routes based on length
-#         if process["operator"] == "<":
-#             if len(process["val"]) == 2:
-#                 # The number of different routes from start to end with a distance of less than process["val"][1].
-#                 pass
-#             else:
-#                 # The length of the shortest route from start_node to end_node
-#                 output = run_route_len(graph, start_node=start_node, end_node=end_node, operator=process["operator"])
-#
-#     if not output:
-#         output = "NO SUCH ROUTE"
-#
-#     return output
+def count_routes_by_max_distance(graph, start_node, end_node, max_distance=30, route="", distance=0):
+    """
+    Count routes recursively between a start node and an end node based on a maximum distance criterion. For example,
+    given a starting route at C and an ending at C, count and return the number of different routes with a distance of
+    less than 30, ie, maximum distance==30.
+    """
+    route = route + start_node
+    count = 0
 
+    for neighbor in graph.edges[start_node]:
+        distance = int(route_distance(graph, route + neighbor, exception_message=0))
 
-def route_verification(_route, graph):
-    # if "->" in _route:
-    #     output = complex_route(_route, graph)
-    if "-" in _route:
-        output = route_distance(_route, graph)
+        if distance and distance >= max_distance:
+            break
 
-    else:
-        if type(_route) is not list:
-            _route = _route.split("-")
+        if neighbor == end_node:
+            count += 1
 
-        output = route_distance(_route, graph)
-
-    return output
+        count += count_routes_by_max_distance(graph, neighbor, end_node, max_distance=max_distance, route=route)
+    return count
 
 
 if __name__ == '__main__':
     g = Graph("AB5, BC4, CD8, DC8, DE6, AD5, CE2, EB3, AE7")
-    print(g.distances)
-    print(g.edges)
-    #
-    # print(g.edges['A'])
-    # print("C->C, S <= 3")
-    # print(count_routes(g, 'C', 'C', 3, operator="<="))
-    #
-    # print("################")
-    # print("A->C, S == 4")
-    # print(count_routes(g, 'A', 'C', 4, operator="=="))
-    # print("!!!!!!!!!!!!!!!!!!!!")
     print(shortest_route(g, 'B', 'B'))
-    # print(shortest_route(g, 'C', 'C', max_dist=30))
-
-    # assert route_verification("A->C, L<", g) == 9
-    # assert route_verification("B->B, L<", g) == 9
-
-    # print("########################")
-    # print(route_verification("C->C, S <= 3", g)) # A-B-C
-    # print("########################")
-    # print("A-B-C:", route_verification("A-B-C", g))
-    # print("A-D:", route_verification("A-D", g))
-    # print("A-D-C:", route_verification("A-D-C", g))
-    # print("A-E-B-C-D:", route_verification("A-E-B-C-D", g))
-    # print("A-E-D:", route_verification("A-E-D", g))
-
-
-def tmp():
-    # TODO
-
-    """
-    # C->C
-    # Route starting at C and ending at C
-    # S <= 3
-    # with less or equal to 3 stops
-
-    >>> route_verification("C->C, S <= 3", g)
-    2
-
-    C-D-C (2 stops)
-    C-E-B-C (3 stops)
-    """
-
-    print("A->C, S == 4", route_verification("A->C, S == 4", g))
-    """
-    # A->C
-    # Route starting at A and ending at C
-    # S == 4
-    # equal to 4 stops
-
-    >>> route_verification("A->C, S == 4", g)
-    3
-
-    A-B-C-D-C (4 stops)
-    A-D-C-D-C (4 stops)
-    A-D-E-B-C (4 stops)
-    """
-
-    print("A->C, L<", route_verification("A->C, L<", g))
-    """
-    # A->C
-    # Route starting at A and ending at C
-    # L<
-    # lenght of the shortest route
-
-    >>> route_verification("A->C, L<", g)
-    9
-
-    The length of the shortest route (in terms of distance to travel) from A to C.
-    """
-
-    print("B->B, L<", route_verification("B->B, L<", g))
-    """
-    # B->B
-    # Route starting at B and ending at B
-    # L<
-    # lenght of the shortest route
-
-    >>> route_verification("B->B, L<", g)
-    9
-
-    The length of the shortest route (in terms of distance to travel) from B to B.
-    """
-
-    print("C->C, L<30", route_verification("C->C, L<30", g))
-    """
-    # C->C
-    # Route starting at C and ending at C
-    # L<30
-    # lenght less than 30
-
-    >>> route_verification("C->C, L<30", g)
-    7
-
-    The number of different routes from C to C with a distance of less than 30.  In the sample data, the trips are:
-    CDC,
-    CEBC,
-    CEBCDC,
-    CDCEBC,
-    CDEBC,
-    CEBCEBC,
-    CEBCEBCEBC.
-    """
+    print(count_routes_by_max_distance(g, 'C', 'C', max_distance=30))
