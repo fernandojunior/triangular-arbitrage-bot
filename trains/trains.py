@@ -19,16 +19,20 @@ class Graph:
             self.add_edges(distances_str.replace(" ", "").split(","))
 
     def distance(self, from_node, to_node):
+        """ Return a distance between two nodes """
         return self.distances[(from_node, to_node)]
 
-    def add_edges(self, node_pair_distances):
-        for node_pair_distance in node_pair_distances:
-            self.add_edge(node_pair_distance[0], node_pair_distance[1], int(node_pair_distance[2]))
+    def add_edges(self, node_pair_distance_arrs):
+        """ Add edges from an array of node_pair_distances array: [from node, to_node, distance] """
+        for node_pair_distance_arr in node_pair_distance_arrs:
+            self.add_edge(node_pair_distance_arr[0], node_pair_distance_arr[1], int(node_pair_distance_arr[2]))
 
     def add_node(self, node):
+        """ Add node into graph nodes """
         self.nodes.add(node)
 
     def add_edge(self, from_node, to_node, distance):
+        """ Add a distance edge between from_node and to_node"""
         self.add_node(from_node)
         self.add_node(to_node)
         self.edges[from_node].append(to_node)
@@ -45,8 +49,11 @@ def route_distance(graph, route, exception_message="NO SUCH ROUTE"):
         return exception_message
 
 
-def shortest_route(graph, start_node, end_node):
-    "Giving a distance graph, return the shortest path between a starting and ending routes without repetition."
+def shortest_route_ditance(graph, start_node, end_node):
+    """
+    Giving a distance graph, return the shortest route distance between a starting and ending routes without repetition.
+    It's based on nearest neighbour algorithm. https://en.wikipedia.org/wiki/Nearest_neighbour_algorithm
+    """
     route = ""
     total_distance = 0
 
@@ -126,5 +133,5 @@ def count_routes_by_max_distance(graph, start_node, end_node, max_distance=30, r
 
 if __name__ == '__main__':
     g = Graph("AB5, BC4, CD8, DC8, DE6, AD5, CE2, EB3, AE7")
-    print(shortest_route(g, 'B', 'B'))
+    print(shortest_route_ditance(g, 'B', 'B'))
     print(count_routes_by_max_distance(g, 'C', 'C', max_distance=30))

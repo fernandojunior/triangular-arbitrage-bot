@@ -17,8 +17,8 @@ def test_route_verification():
     assert route_distance(g, "A-E-D") == 'NO SUCH ROUTE'
     assert count_routes_by_stops(g, 'C', 'C', 3, operator="<=") == 2
     assert count_routes_by_stops(g, 'A', 'C', 4, operator="==") == 3
-    assert shortest_route(g, 'A', 'C') == 9
-    assert shortest_route(g, 'B', 'B') == 9
+    assert shortest_route_ditance(g, 'A', 'C') == 9
+    assert shortest_route_ditance(g, 'B', 'B') == 9
     assert count_routes_by_max_distance(g, 'C', 'C', max_distance=30) == 7
     # assert route_verification("A->C, L<", g) == 9
     # assert route_verification("B->B, L<", g) == 9
@@ -32,13 +32,6 @@ def test_simple_route():
     assert route_distance(g, "A-D-C") == '13'
     assert route_distance(g, "A-E-B-C-D") == '22'
     assert route_distance(g, "A-E-D") == 'NO SUCH ROUTE'
-
-
-def test_mysplit():
-    assert mysplit("/", "/") == []
-    assert mysplit("/a", "/") == ['a']
-    assert mysplit("/a/a", "/") == ['a', 'a']
-    assert mysplit("/a/a/a/", "/") == ['a', 'a', 'a']
 
 
 def test_count_routes():
