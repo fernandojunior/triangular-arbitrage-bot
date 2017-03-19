@@ -69,7 +69,6 @@ def test_run_route_len():
     g = create_graph("AB5, BC4, CD8, DC8, DE6, AD5, CE2, EB3, AE7")
     # assert run_route_len( g, start_node = "A", end_node="C", operator="<") == 9
     # assert run_route_len( g, start_node = "B", end_node="B", operator="<") == 9
-    # assert run_route_len2( g, start_node = "C", end_node="C", operator="<", min_dist = 30, return_amount=True, pathway = "C") == 7  # noqa
     # assert route_verification("C->C, L<30", g) == 7
     assert run_route_len3(g, start_node="C", end_node="C", max_dist=30) == 7
 
