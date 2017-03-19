@@ -4,25 +4,32 @@ from collections import defaultdict
 
 
 class Graph:
-    """ Creates the graph for use with dijsktra This is a very simple implementation, it may only add nodes and edges"""
-    def __init__(self, directed=False):
+    """ An unidireccional edge graph. This is a very simple implementation, it may only add nodes and edges"""
+
+    def __init__(self, distances_str=None):
         self.nodes = set()
         self.edges = defaultdict(list)
         self.distances = {}
-        self.directed = directed
 
-    def add_node(self, value):
-        self.nodes.add(value)
+        if distances_str:
+            self.add_edges(distances_str.replace(" ", "").split(","))
+
+    def add_edges(self, node_pair_distances):
+        for node_pair_distance in node_pair_distances:
+            self.add_edge(node_pair_distance[0], node_pair_distance[1], int(node_pair_distance[2]))
+
+    def add_node(self, node):
+        self.nodes.add(node)
 
     def add_edge(self, from_node, to_node, distance):
+        self.add_node(from_node)
+        self.add_node(to_node)
         self.edges[from_node].append(to_node)
-        if self.directed:
-            self.edges[to_node].append(from_node)
         self.distances[(from_node, to_node)] = distance
 
 
 def dijsktra(graph, initial):
-      """dijsktra implementation, returns two dictionaries: visited nodes and path"""
+    """dijsktra implementation, returns two dictionaries: visited nodes and path"""
     visited = {initial: 0}
     path = {}
 
@@ -55,29 +62,6 @@ def dijsktra(graph, initial):
 def mysplit(s, delim=None):
     """Special split that does not return empty strings"""
     return [x for x in s.split(delim) if x]
-
-
-def create_graph(graph):
-    if type(graph) is not list:
-        graph = graph.replace(" ", "").split(",")
-
-    nodes = set()
-    edges = list()
-
-    for chars in graph:
-        nodes.add(chars[0])
-        nodes.add(chars[1])
-        edges.append([chars[0], chars[1], int(chars[2])])
-
-    g = Graph()
-
-    for node in nodes:
-        g.add_node(node)
-
-    for edge in edges:
-        g.add_edge(edge[0], edge[1], edge[2])
-
-    return g
 
 
 def simple_route(_route, _graph):
@@ -302,7 +286,7 @@ def route_verification(_route, _graph):
 
 if __name__ == '__main__':
     # g = create_graph(input("Enter Graph: "))
-    g = create_graph("AB5, BC4, CD8, DC8, DE6, AD5, CE2, EB3, AE7")
+    g = Graph("AB5, BC4, CD8, DC8, DE6, AD5, CE2, EB3, AE7")
     # print(route_verification(input("enter route: "), g)) #A-B-C
     print("A-B-C:", route_verification("A-B-C", g))
     print("A-D:", route_verification("A-D", g))
