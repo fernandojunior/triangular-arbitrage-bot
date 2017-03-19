@@ -1,5 +1,5 @@
 """
-Problem one: Trains
+ThoughtWorks Trains Solution
 
 author: Fernando Felix do Nascimento Junior
 year: 2017
@@ -49,7 +49,7 @@ def route_distance(graph, route, exception_message="NO SUCH ROUTE"):
         return exception_message
 
 
-def shortest_route_ditance(graph, start_node, end_node):
+def shortest_route_distance(graph, start_node, end_node):
     """
     Giving a distance graph, return the shortest route distance between a starting and ending routes without repetition.
     It's based on nearest neighbour algorithm. https://en.wikipedia.org/wiki/Nearest_neighbour_algorithm
@@ -109,17 +109,17 @@ def count_routes_by_stops(graph, start_node, end_node, stops, operator="<=", _ro
     return count
 
 
-def count_routes_by_max_distance(graph, start_node, end_node, max_distance=30, route="", distance=0):
+def count_routes_by_max_distance(graph, start_node, end_node, max_distance=30, _route=""):
     """
     Count routes recursively between a start node and an end node based on a maximum distance criterion. For example,
     given a starting route at C and an ending at C, count and return the number of different routes with a distance of
     less than 30, ie, maximum distance==30.
     """
-    route = route + start_node
+    _route = _route + start_node
     count = 0
 
     for neighbor in graph.edges[start_node]:
-        distance = int(route_distance(graph, route + neighbor, exception_message=0))
+        distance = int(route_distance(graph, _route + neighbor, exception_message=0))
 
         if distance and distance >= max_distance:
             break
@@ -127,11 +127,11 @@ def count_routes_by_max_distance(graph, start_node, end_node, max_distance=30, r
         if neighbor == end_node:
             count += 1
 
-        count += count_routes_by_max_distance(graph, neighbor, end_node, max_distance=max_distance, route=route)
+        count += count_routes_by_max_distance(graph, neighbor, end_node, max_distance=max_distance, _route=_route)
     return count
 
 
 if __name__ == '__main__':
     g = Graph("AB5, BC4, CD8, DC8, DE6, AD5, CE2, EB3, AE7")
-    print(shortest_route_ditance(g, 'B', 'B'))
+    print(shortest_route_distance(g, 'B', 'B'))
     print(count_routes_by_max_distance(g, 'C', 'C', max_distance=30))

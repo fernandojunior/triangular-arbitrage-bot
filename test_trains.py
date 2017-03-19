@@ -1,4 +1,4 @@
-from trains.trains import *  # noqa
+from trains import *  # noqa
 
 
 def test_create_graph():
@@ -17,8 +17,8 @@ def test_route_verification():
     assert route_distance(g, "A-E-D") == 'NO SUCH ROUTE'
     assert count_routes_by_stops(g, 'C', 'C', 3, operator="<=") == 2
     assert count_routes_by_stops(g, 'A', 'C', 4, operator="==") == 3
-    assert shortest_route_ditance(g, 'A', 'C') == 9
-    assert shortest_route_ditance(g, 'B', 'B') == 9
+    assert shortest_route_distance(g, 'A', 'C') == 9
+    assert shortest_route_distance(g, 'B', 'B') == 9
     assert count_routes_by_max_distance(g, 'C', 'C', max_distance=30) == 7
     # assert route_verification("A->C, L<", g) == 9
     # assert route_verification("B->B, L<", g) == 9
