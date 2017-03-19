@@ -66,28 +66,12 @@ def mysplit(s, delim=None):
 
 def route_distance(route, graph):
     """ Return the total route distance given a distance graph """
-    if type(route) is not list:
-        route = route.split("-")
-
-    total_distance = 0
-
-    for i, current_node in enumerate(route):
-        # has next node in route
-        if len(route) > i + 1:
-            next_node = route[i + 1]
-        else:
-            break
-
-        visited, path = dijsktra(graph, current_node)
-
-        if (next_node in path) and (path[next_node] == current_node):
-            # agregate acumulative visited node distance into total_distance
-            total_distance += visited[next_node]
-        else:
-            total_distance = None
-            break
-
-    return str(total_distance) if total_distance else "NO SUCH ROUTE"
+    route = route.replace("-", "")
+    edges = [(route[i], route[i + 1]) for i in range(len(route)) if i < len(route) - 1]
+    try:
+        return str(sum([graph.distances[edge] for edge in edges]))
+    except:
+        return "NO SUCH ROUTE"
 
 """
   # C->C
@@ -171,79 +155,62 @@ def run_route_len(graph, start_node,  end_node, operator="<", _dist=0, min_dist=
     return _dist
 
 
-def run_route(graph, start_node, max_stops, end_node, operator="<=", stops=-1, pathway=""):
-    pathway = pathway + start_node + " "
-    visited, path = dijsktra(graph, start_node)
-    output = 0
-    print("From", start_node, "to", end_node, "::")
-    print(path)
+def count_routes(graph, start_node, end_node, max_stops, operator="<=", route="", criteria=None):
+    """
+    Count routes recursively between a start node and an end node
+    """
+    route = route + start_node
+    route_counts = 0
+    stops = len(route) - 1
 
-    stops += 1
+    for neighbor in graph.edges[start_node]:
+        print("route>", route, "From", start_node, "to", end_node, " stops:", stops)
+        if stops > max_stops:
+            break
 
-    for k in path.keys():
-        if path[k] == start_node:
-            if stops > max_stops:
-                pathway = pathway + end_node
-                # print("Too far away, stops", stops, pathway)
+        if neighbor == end_node:
+            route = route + end_node
+            if operator == "<=" or stops == max_stops:
+                route_counts = 1
                 break
 
-            if k == end_node:
-                if operator == "<=":
-                    pathway = pathway + end_node
-                    # print("Found the end of the way!", pathway)
-                    output = 1
-                    break
-                elif stops == max_stops:
-                    pathway = pathway + end_node
-                    # print("Found the end of the way!", pathway)
-                    output = 1
-                    break
+        route_counts += count_routes(graph, neighbor, end_node, max_stops, operator=operator, route=route)
 
-            print(start_node, "->", k, stops, "-", pathway)
-            output += run_route(graph=graph, start_node=k, max_stops=max_stops, end_node=end_node, operator=operator,
-                                stops=stops, pathway=pathway)  # noqa
-
-    return output
+    return route_counts
 
 
-def complex_route(route, graph, stops_handler=None):
+def complex_route(route, graph, criteria_type=None, criteria=None):
     """If the route is valid it returns the total distance to travel"""
     output = 0
 
-    if type(route) is not list:
-        route = route.replace(" ", "").split(",")
-
-    start_node, end_node = route[0].split("->")[0], route[0].split("->")[1]
-    print(start_node, end_node)
+    route, criteria = route.replace(" ", "").split(",")
+    start_node, end_node = route.split("->")
 
     process = {"val": list(), "operator": ""}
 
-    if "==" in route[1]:
+    if "==" in criteria:
         process["operator"] = "=="
 
-    elif "<=" in route[1]:
+    elif "<=" in criteria:
         process["operator"] = "<="
 
-    elif "<" in route[1]:
+    elif "<" in criteria:
         process["operator"] = "<"
 
-    process["val"] = mysplit(route[1], process["operator"])
+    process["val"] = mysplit(criteria, process["operator"])
 
     if process["val"][0].upper() == "S":
         # return number of routes with a defined number of stops betwen start and end
         if process["operator"] == "==":
             # which are equal to process["val"][1]
             max_stops = int(process["val"][1])
-            print("start_node", start_node, "end node", end_node)
-            output = run_route(graph=graph, start_node=start_node, max_stops=int(process["val"][1]),
-                               end_node=end_node, operator=process["operator"])
+            output = count_routes(graph, start_node, end_node, max_stops=int(process["val"][1]),
+                                  operator=process["operator"], criteria=criteria)
 
         elif process["operator"] == "<=":
             # which are equal or less to process["val"][1]
             max_stops = int(process["val"][1])
-            print("start_node", start_node, "end node", end_node)
-            output = run_route(graph=graph, start_node=start_node, max_stops=max_stops, end_node=end_node,
-                               operator=process["operator"])
+            output = count_routes(graph, start_node, end_node, max_stops=max_stops, operator=process["operator"])
 
     elif process["val"][0].upper() == "L":
         # return routes based on length
@@ -279,6 +246,18 @@ def route_verification(_route, graph):
 
 if __name__ == '__main__':
     g = Graph("AB5, BC4, CD8, DC8, DE6, AD5, CE2, EB3, AE7")
+    print(g.edges)
+
+    print(g.edges['A'])
+    print("C->C, S <= 3")
+    print(route_verification("C->C, S <= 3", g))
+    print("################")
+    print("A->C, S == 4")
+    assert route_verification("A->C, S == 4", g) == 3
+    print("!!!!!!!!!!!!!!!!!!!!")
+
+    # assert route_verification("A->C, L<", g) == 9
+    # assert route_verification("B->B, L<", g) == 9
 
     # assert dijsktra(g, "A") == ({'E': 7, 'A': 0, 'C': 9, 'B': 5, 'D': 5}, {'E': 'A', 'C': 'B', 'B': 'A', 'D': 'A'})
     # print("########################")
@@ -294,7 +273,6 @@ if __name__ == '__main__':
 def tmp():
     # TODO
 
-    print("C->C, S <= 3", route_verification("C->C, S <= 3", g))
     """
     # C->C
     # Route starting at C and ending at C

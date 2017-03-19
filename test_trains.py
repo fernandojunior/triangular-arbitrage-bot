@@ -55,10 +55,10 @@ def test_mysplit():
     assert mysplit("/a/a/a/", "/") == ['a', 'a', 'a']
 
 
-def test_run_route():
+def test_count_routes():
     g = Graph("AB5, BC4, CD8, DC8, DE6, AD5, CE2, EB3, AE7")
-    assert run_route(g, start_node="C", max_stops=3, end_node="C") == 2
-    assert run_route(g, start_node="A", max_stops=4, end_node="C", operator="==") == 3
+    assert count_routes(g, start_node="C", max_stops=3, end_node="C") == 2
+    assert count_routes(g, start_node="A", max_stops=4, end_node="C", operator="==") == 3
     # A to C (via B,C,D); A to C (via D,C,D); and A to C (via D,E,B)
     # A B C D C
     # A D C D C
