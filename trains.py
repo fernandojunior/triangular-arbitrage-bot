@@ -1,5 +1,5 @@
 """
-ThoughtWorks Trains Solution
+ThoughtWorks Trains Solution.
 
 author: Fernando Felix do Nascimento Junior
 year: 2017
@@ -133,5 +133,21 @@ def count_routes_by_max_distance(graph, start_node, end_node, max_distance=30, _
 
 if __name__ == '__main__':
     g = Graph("AB5, BC4, CD8, DC8, DE6, AD5, CE2, EB3, AE7")
+
+    # calculate route distances
+    print(route_distance(g, "A-B-C"))
+    print(route_distance(g, "A-D"))
+    print(route_distance(g, "A-D-C"))
+    print(route_distance(g, "A-E-B-C-D"))
+    print(route_distance(g, "A-E-D"))
+
+    # count routes recursively between a start node and an end node based on a number of stops
+    print(count_routes_by_stops(g, 'C', 'C', 3, operator="<="))  # a maximum of 3 stops
+    print(count_routes_by_stops(g, 'A', 'C', 4, operator="=="))  # exactly 4 stops
+
+    # shortest route distance based on Nearest Neighbour Algorithm
+    print(shortest_route_distance(g, 'A', 'C'))
     print(shortest_route_distance(g, 'B', 'B'))
+
+    # count routes recursively between a start node and an end node based on a max distance
     print(count_routes_by_max_distance(g, 'C', 'C', max_distance=30))

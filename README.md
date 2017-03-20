@@ -1,36 +1,89 @@
-# Problem one: Trains
+# Trains
+
+ThoughtWorks Trains Solution by Fernando Felix do Nascimento Junior.
+
+See [PROBLEM](/PROBLEM.md).
+
+## Module artifacts
+
+The module `trains.py` contains basically a distance Graph class and a set of function to help compute route distances and counts.
+
+Bellow an abstract of the module artifacts.
+
+* Graph class: An unidireccional distance graph
+* route_distance function: Return the total route distance given a distance graph
+* shortest_route_distance function: Return the shortest route distance between a starting and ending routes based on
+nearest neighbour algorithm
+* count_routes_by_stops function: Count routes recursively between a start node and an end node based on number of stops
+criterion
+* count_routes_by_max_distance: Count routes recursively between a start node and an end node based on a maximum
+distance criterion.
+
+## Tools
+
+* [coverage.py](https://coverage.readthedocs.org/) - Code coverage measurement.
+* [Flake8](https://flake8.readthedocs.org/) - Modular source code checker: pep8, pyflakes and co.
+* [pytest](http://pytest.org/) - A mature full-featured Python testing tool.
+* [setuptools](https://pythonhosted.org/setuptools/setuptools.html) - Easily download, build, install, upgrade, and uninstall distribution packages.
+* [tox](https://tox.readthedocs.org/) - Auto builds and tests distributions in multiple Python versions using virtualenvs.
+
+## Structure
+
+```sh
+├── Makefile  # Automates useful tasks to use with make, a build automation tool
+├── MANIFEST.in  # Specifies extra resources to add in distributions packages
+├── PROBLEM.md  # Specifies the train problem 
+├── README.md  # Details how to use the solution
+├── requirements.txt  # Contains dependencies of the project to be installed using pip
+├── trains.py  # The core code of the solution
+├── setup.cfg  # Configures some settings of the tools used in the project
+├── setup.py  # Contains information needed to build distributions with setuptools
+├── tests.py  # Provides some automated tests to run with pytest
+└── tox.ini  # Defines test environments to run with tox
+```
 
 
-The local commuter railroad services a number of towns in Kiwiland.  Because of monetary concerns, all of the tracks are 'one-way.'  That is, a route from Kaitaia to Invercargill does not imply the existence of a route from Invercargill to Kaitaia.  In fact, even if both of these routes do happen to exist, they are distinct and are not necessarily the same distance!
+## Usage
 
-The purpose of this problem is to help the railroad provide its customers with information about the routes.  In particular, you will compute the distance along a certain route, the number of different routes between two towns, and the shortest route between two towns.
+Create virtualenv
+`virtualenv env && . env/bin/activate`
 
-Input:  A directed graph where a node represents a town and an edge represents a route between two towns.  The weighting of the edge represents the distance between the two towns.  A given route will never appear more than once, and for a given route, the starting and ending town will not be the same town.
+Install code style and test requirements
+`pip insall -r requirements.txt`
 
-Output: For test input 1 through 5, if no such route exists, output 'NO SUCH ROUTE'.  Otherwise, follow the route as given; do not make any extra stops!  For example, the first problem means to start at city A, then travel directly to city B (a distance of 5), then directly to city C (a distance of 4).
-The distance of the route A-B-C.
-The distance of the route A-D.
-The distance of the route A-D-C.
-The distance of the route A-E-B-C-D.
-The distance of the route A-E-D.
+Run ThoughtWorks trains solution
+`python trains.py`
 
-The number of trips starting at C and ending at C with a maximum of 3 stops.  In the sample data below, there are two such trips: C-D-C (2 stops). and C-E-B-C (3 stops).
-The number of trips starting at A and ending at C with exactly 4 stops.  In the sample data below, there are three such trips: A to C (via B,C,D); A to C (via D,C,D); and A to C (via D,E,B).
-The length of the shortest route (in terms of distance to travel) from A to C.
-The length of the shortest route (in terms of distance to travel) from B to B.
-The number of different routes from C to C with a distance of less than 30.  In the sample data, the trips are: CDC, CEBC, CEBCDC, CDCEBC, CDEBC, CEBCEBC, CEBCEBCEBC.
+Output
+```
+9
+5
+13
+22
+NO SUCH ROUTE
+2
+3
+9
+9
+7
+```
 
-Test Input:
-For the test input, the towns are named using the first few letters of the alphabet from A to E.  A route between two towns (A to B) with a distance of 5 is represented as AB5.
-Graph: AB5, BC4, CD8, DC8, DE6, AD5, CE2, EB3, AE7
-Expected Output:
-Output #1: 9
-Output #2: 5
-Output #3: 13
-Output #4: 22
-Output #5: NO SUCH ROUTE
-Output #6: 2
-Output #7: 3
-Output #8: 9
-Output #9: 9
-Output #10: 7
+Run all provided tests for the solution
+`py.test`
+
+Run code coverage
+`coverage report --show-missing`
+
+Output:
+
+```
+Name        Stmts   Miss  Cover   Missing
+-----------------------------------------
+tests.py       33      0   100%
+trains.py      86     11    87%   135-153
+-----------------------------------------
+TOTAL         119     11    91%
+```
+
+Build, test and coverage the solution in different python verions
+`tox`
