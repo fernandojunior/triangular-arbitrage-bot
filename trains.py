@@ -88,6 +88,7 @@ def find_route_path(graph, start_node, end_node, current_node=None, route="", to
 
 if __name__ == '__main__':
     pairCosts = Graph()
+    # pairCosts = Graph("AZ1, ZX2, XA1, AB5, BC4, CD8, DC8, DE6, AD5, CE2, EB3, AE7, BA4")
 
     # fake crypto pairs and its profits
     pairCosts.add_edge('A', 'Z', 1)
@@ -98,11 +99,11 @@ if __name__ == '__main__':
     pairCosts.add_edge('C', 'D', 8)
     pairCosts.add_edge('D', 'C', 8)
     pairCosts.add_edge('D', 'E', 6)
-    pairCosts.add_edge('A', 'D', 6)
-    pairCosts.add_edge('C', 'E', 6)
-    pairCosts.add_edge('E', 'B', 6)
-    pairCosts.add_edge('A', 'E', 6)
-    pairCosts.add_edge('B', 'A', 6)
+    pairCosts.add_edge('A', 'D', 5)
+    pairCosts.add_edge('C', 'E', 2)
+    pairCosts.add_edge('E', 'B', 3)
+    pairCosts.add_edge('A', 'E', 7)
+    pairCosts.add_edge('B', 'A', 4)
 
     print(find_route_path(pairCosts, 'A', 'A', shortest=True))
     print(find_route_path(pairCosts, 'A', 'A', shortest=False))
