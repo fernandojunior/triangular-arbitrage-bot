@@ -25,13 +25,8 @@ The module `trains.py` contains basically a distance Graph class and a set of fu
 Bellow an abstract of the module artifacts.
 
 * Graph class: An unidireccional distance graph
-* route_distance function: Return the total route distance given a distance graph
-* shortest_route_distance function: Return the shortest route distance between a starting and ending routes based on
-nearest neighbour algorithm
-* count_routes_by_stops function: Count routes recursively between a start node and an end node based on number of stops
-criterion
-* count_routes_by_max_distance: Count routes recursively between a start node and an end node based on a maximum
-distance criterion.
+* find_route_path function: Return the shortest or largest route distance between a starting and ending routes based on nearest neighbour algorithm
+
 
 ## Tools
 
