@@ -1,10 +1,10 @@
 const Graph = require('./graph')
 
-function findRoutePath(graph, startNode, endNode, shortest=true, currentNode=null, route='', totalDistance=0, maxStops=3) {
-  currentNode = currentNode ? currentNode : startNode
+function findRoutePath (graph, startNode, endNode, shortest = true, currentNode = null, route = '', totalDistance = 0, maxStops = 3) {
+  currentNode = currentNode || startNode
   route = route + currentNode
 
-  sortedNeighborDistances = graph.getSortedNeighborDistances(currentNode, reverse=!shortest)
+  const sortedNeighborDistances = graph.getSortedNeighborDistances(currentNode, !shortest)
 
   if (route.length > 2 && [startNode, endNode].includes(currentNode)) {
     return { route, totalDistance }
@@ -23,15 +23,15 @@ function findRoutePath(graph, startNode, endNode, shortest=true, currentNode=nul
 
     currentNode = neighbor
 
-    result = findRoutePath(
-        graph,
-        startNode,
-        endNode,
-        shortest,
-        currentNode,
-        route,
-        totalDistance=totalDistance + distance,
-        maxStops
+    const result = findRoutePath(
+      graph,
+      startNode,
+      endNode,
+      shortest,
+      currentNode,
+      route,
+      totalDistance + distance,
+      maxStops
     )
 
     if (result) {

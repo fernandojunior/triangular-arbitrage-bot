@@ -1,18 +1,16 @@
 class Graph {
-
-  constructor() {
+  constructor () {
     this.nodes = new Set()
     this.edges = {}
     this.distances = {}
   }
 
-  getNeighbors(fromNode) {
+  getNeighbors (fromNode) {
     return this.edges[fromNode]
   }
 
-  getNeighborDistances(fromNode) {
+  getNeighborDistances (fromNode) {
     const neighbors = this.getNeighbors(fromNode)
-
     return neighbors.reduce((neighborDistances, neighbor) => {
       return {
         ...neighborDistances,
@@ -21,7 +19,7 @@ class Graph {
     }, {})
   }
 
-  getSortedNeighborDistances(fromNode, reverse=false) {
+  getSortedNeighborDistances (fromNode, reverse = false) {
     const neighborDistances = this.getNeighborDistances(fromNode)
 
     let sortedKeys = Object
@@ -41,19 +39,19 @@ class Graph {
       }, {})
   }
 
-  addDistance(from_node, to_node, distance) {
-    this.distances[String([from_node, to_node])] = distance
+  addDistance (fromNode, toNode, distance) {
+    this.distances[String([fromNode, toNode])] = distance
   }
 
-  getDistance (from_node, to_node) {
-    return this.distances[String([from_node, to_node])]
+  getDistance (fromNode, toNode) {
+    return this.distances[String([fromNode, toNode])]
   }
 
-  addNode(node) {
+  addNode (node) {
     this.nodes.add(node)
   }
 
-  addEdge(fromNode, toNode, distance) {
+  addEdge (fromNode, toNode, distance) {
     this.addNode(fromNode)
     this.addNode(toNode)
     this.addDistance(fromNode, toNode, distance)
@@ -61,7 +59,6 @@ class Graph {
     this.edges[fromNode] = this.edges[fromNode] || []
     this.edges[fromNode].push(toNode)
   }
-
 }
 
 module.exports = Graph
