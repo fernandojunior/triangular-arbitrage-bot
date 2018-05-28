@@ -1,4 +1,4 @@
-function  findRoutePath (graph, startNode, endNode, shortest = true, currentNode = null, route = '', totalDistance = 0, maxStops = 3) {
+function findRoutePath (graph, startNode, endNode, shortest = true, currentNode = null, route = '', totalDistance = 0, maxStops = 3) {
   currentNode = currentNode || startNode
   route = route + currentNode
 

@@ -30,5 +30,11 @@
     "eslint-plugin-promise": "^3.8.0",
     "eslint-plugin-standard": "^3.1.0",
     "husky": "^1.0.0-rc.7"
+  },
+  "dependencies": {
+    "dateformat": "^3.0.3",
+    "es6-promisify": "^6.0.0",
+    "node-binance-api": "^0.6.0",
+    "request-promise": "^4.2.2"
   }
 }
