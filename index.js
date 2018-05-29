@@ -1,20 +1,14 @@
 const Graph = require('./graph')
 const { findRoutePath } = require('./utils')
+const { binance } = require('./exchangeApis')
 
-const pairCosts = new Graph()
-pairCosts.addEdge('A', 'Z', 1)
-pairCosts.addEdge('Z', 'X', 2)
-pairCosts.addEdge('X', 'A', 1)
-pairCosts.addEdge('A', 'B', 5)
-pairCosts.addEdge('B', 'C', 4)
-pairCosts.addEdge('C', 'D', 8)
-pairCosts.addEdge('D', 'C', 8)
-pairCosts.addEdge('D', 'E', 6)
-pairCosts.addEdge('A', 'D', 5)
-pairCosts.addEdge('C', 'E', 2)
-pairCosts.addEdge('E', 'B', 3)
-pairCosts.addEdge('A', 'E', 7)
-pairCosts.addEdge('B', 'A', 4)
+binance.getTwoWayTickers().then((tickers) => {
+  const pairCosts = new Graph()
+  Object.keys(tickers).forEach((tickerName) => {
+    const { baseSymbol, quotaSymbol, bidPrice } = tickers[tickerName]
+    pairCosts.addEdge(baseSymbol, quotaSymbol, bidPrice)
+  })
 
-console.log(findRoutePath(pairCosts, 'A', 'A', true))
-console.log(findRoutePath(pairCosts, 'A', 'A', false))
+  // TODO change cost function for findRoutePath function to calculate profit
+  console.log(findRoutePath(pairCosts, 'BTC', 'BTC', false))
+})
